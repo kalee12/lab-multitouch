@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.HashMap;
+
 /**
  * An example SurfaceView for generating graphics on
  * @author Joel Ross
@@ -32,6 +34,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
     public Ball ball; //public for easy access
 
+    private static HashMap<Integer, Ball> touches;
 
     /**
      * We need to override all the constructors, since we don't know which will be called
@@ -61,7 +64,26 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         goldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         goldPaint.setColor(Color.rgb(145, 123, 76));
 
-        init();
+        touches = new HashMap<>();
+
+//        init();
+    }
+
+    public static synchronized void addTouch(Integer id, float x, float y) {
+        Ball newBall = new Ball(x, y, 100);
+        touches.put(id, newBall);
+
+    }
+
+    public static synchronized void removeTouch(Integer id) {
+        touches.remove(id);
+    }
+
+    public static synchronized void moveTouch(Integer id, float x, float y) { {
+        Ball newBall = new Ball(x, y, 100);
+        touches.put(id,newBall);
+    }
+
     }
 
     /**
@@ -90,7 +112,10 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
         canvas.drawColor(Color.rgb(51,10,111)); //purple out the background
 
-        canvas.drawCircle(ball.cx, ball.cy, ball.radius, whitePaint); //we can draw directly onto the canvas
+//        canvas.drawCircle(ball.cx, ball.cy, ball.radius, whitePaint); //we can draw directly onto the canvas
+        for(Ball ball: touches.values()) {
+            canvas.drawCircle(ball.getX(), ball.getY(), ball.getRadius(), goldPaint);
+        }
     }
 
 
